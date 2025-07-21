@@ -126,7 +126,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # آدرس dev فرانت
+    "http://localhost:5173",
+    "http://localhost:5174",
 
 ]
 
