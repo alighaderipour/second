@@ -1,30 +1,17 @@
 <template>
   <div class="categories">
     <h1>دسته‌بندی‌ها</h1>
-
     <form @submit.prevent="addCategory" class="add-form">
-      <input
-        v-model="newCategory"
-        placeholder="نام دسته‌بندی جدید..."
-        class="new-input"
-        :disabled="loadingAdd"
-      />
-      <button :disabled="loadingAdd || !newCategory" class="add-btn">
+      <input v-model="newCategory" placeholder="نام دسته‌بندی جدید..." />
+      <button :disabled="loadingAdd || !newCategory">
         {{ loadingAdd ? "در حال ثبت..." : "ثبت" }}
       </button>
     </form>
-
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
-
-    <ul v-if="!loading" class="category-list">
-      <li v-for="cat in categories" :key="cat.id" class="category-item">
-        {{ cat.name }}
-      </li>
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="loading">در حال بارگذاری...</div>
+    <ul v-else>
+      <li v-for="cat in categories" :key="cat.id">{{ cat.name }}</li>
     </ul>
-
-    <div v-else>در حال بارگذاری...</div>
   </div>
 </template>
 
@@ -34,41 +21,43 @@ import { apiRequest } from '@/stores/mysecond'
 
 const categories = ref([])
 const loading = ref(true)
-const error = ref(null)
+const error = ref('')
 const newCategory = ref('')
 const loadingAdd = ref(false)
 
-const fetchCategories = async () => {
+async function fetchCategories() {
   loading.value = true
-  error.value = null
+  error.value = ''
   try {
     const res = await apiRequest('GET', '/api/categories/')
     categories.value = Array.isArray(res) ? res : (res.results ?? [])
-  } catch (err) {
-    error.value = err.message || 'خطا در دریافت دسته‌بندی‌ها'
-  } finally {
-    loading.value = false
+  } catch (e) {
+    error.value = e.message || 'خطا در دریافت اطلاعات'
   }
+  loading.value = false
 }
 
-const addCategory = async () => {
+async function addCategory() {
   if (!newCategory.value.trim()) return
   loadingAdd.value = true
+  error.value = ''
   try {
     await apiRequest('POST', '/api/categories/', { name: newCategory.value.trim() })
     newCategory.value = ''
     await fetchCategories()
-  } catch (err) {
-    error.value = err.message || 'خطا در افزودن دسته‌بندی'
-  } finally {
-    loadingAdd.value = false
+  } catch (e) {
+    error.value = e.message || 'خطا در افزودن دسته‌بندی'
   }
+  loadingAdd.value = false
 }
 
 onMounted(fetchCategories)
 </script>
 
 <style scoped>
+h1{
+  text-align: right;
+}
 .add-form {
   display: flex;
   gap: 0.6rem;

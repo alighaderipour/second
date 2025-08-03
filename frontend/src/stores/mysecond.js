@@ -1,6 +1,4 @@
-// src/stores/mysecond.js
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000"; // با توجه به تنظیمات
+const API_BASE = import.meta.env.VITE_API_BASE
 
 export async function apiRequest(method, url, body = null, options = {}) {
   // نکته: url می‌تونه کامل نباشه، پس به API_BASE وصل میشه
